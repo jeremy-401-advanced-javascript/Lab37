@@ -17,9 +17,9 @@ function reducer(state, action) {
       return {...state, todoList: state.todoList.filter( item => item._id !== action.payload )};
     case 'toggle':
       return { ...state, todoList: state.todoList.map( (item) => item._id === action.payload ? {...item, complete: !item.complete} : item ) };
-    case 'details':
-      let item = state.todoList.filter( item => item._id === action.payload )[0] || {}
-      return { ...state, showDetails: !state.showDetails, details: item };
+    // case 'details':
+    //   let item = state.todoList.filter( item => item._id === action.payload )[0] || {}
+    //   return { ...state, showDetails: !state.showDetails, details: item };
     default:
       throw new Error();
   }
