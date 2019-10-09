@@ -1,14 +1,23 @@
-import React from 'react';
+import React from "react";
 
-// State Only
-import ToDo from './components/todo/todo.js';
+import { Provider } from "react-redux";
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <>
-        <ToDo />
-      </>
-    );
-  }
+import SettingsContext from './context/settings.js';
+
+import Todos from "./components/todo/todo.js";
+
+import createStore from "./state/store/index.js";
+
+const store = createStore();
+
+function App() {
+  return (
+    <SettingsContext>
+      <Provider store={store}>
+        <Todos />
+      </Provider>
+    </SettingsContext>
+  );
 }
+
+export default App;

@@ -1,10 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-// import SettingsContext from './context/settings.js';
-
-// import App from './app.js';
-import App from "./newApp.js";
+import App from "./app.js";
 
 class Main extends React.Component {
   render() {

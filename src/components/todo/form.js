@@ -1,38 +1,57 @@
-import React from "react";
-import useForm from '../../hooks/form.js';
+import React, { useState, useEffect } from "react";
 
-const TodoForm = props => {
+import uuid from "uuid/v4";
+import { connect } from "react-redux";
+import Form from 'react-jsonschema-form';
 
-  const { handleChange, handleSubmit } = useForm( props.handleSubmit );
+import * as actions from "../../state/store/todos.store.js";
+import "./newTodo.scss";
+
+const schemaURL = "https://api-js401.herokuapp.com/api/v1/todo/schema";
+
+const uiSchema = {
+  _id: { 'ui:widget': 'hidden'},
+  __v: { 'ui:widget': 'hidden'},
+}
+
+function Todos(props) {
+  const [schema, setSchema] = useState({});
+
+  const addTodo = form => {
+    form.formData._id = uuid();
+    props.addTodo(form.formData);
+  };
+
+  const deleteTodo = id => {
+    props.deleteTodo(id);
+  };
+
+  const toggleComplete = id => {
+    props.toggleComplete(id);
+  };
+
+  useEffect(() => {
+    fetch(schemaURL)
+    .then(results => results.json())
+    .then(schemaObject => setSchema(schemaObject));
+  }, []);
 
   return (
-      <>
-        <h3>Add Item</h3>
-        <form onSubmit={handleSubmit}>
-          <label>
-            <span>To Do Item</span>
-            <input
-              name="text"
-              placeholder="Add To Do List Item"
-              onChange={handleChange}
-            />
-          </label>
-          <label>
-            <span>Difficulty Rating</span>
-            <input type="range" min="1" max="5" name="difficulty" onChange={handleChange} />
-          </label>
-          <label>
-            <span>Assigned To</span>
-            <input type="text" name="assignee" placeholder="Assigned To" onChange={handleChange} />
-          </label>
-          <label>
-            <span>Due</span>
-            <input type="date" name="due" onChange={handleChange} />
-          </label>
-          <button>Add Item</button>
-        </form>
-      </>
-    );
-};
+    <Form schema={schema} uiSchema={uiSchema} onSubmit={addTodo} />
+  );
+}
 
-export default TodoForm;
+const mapStateToProps = state => ({
+  todoList: state.todos
+});
+
+const mapDispatchToProps = (dispatch, getState) => ({
+  addTodo: todoObject => dispatch(actions.add(todoObject)),
+  deleteTodo: todoObject => dispatch(actions.destroy(todoObject)),
+  toggleComplete: todoObject => dispatch(actions.complete(todoObject))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Todos);
